@@ -1,6 +1,7 @@
 function Color() {
 }
 
+Color.BLACK = "Black";
 Color.BLUE = "Blue";
 Color.CYAN = "Cyan";
 Color.GREEN = "Green";
