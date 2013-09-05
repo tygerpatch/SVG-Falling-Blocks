@@ -9,8 +9,14 @@
       <script src = "Position.js"></script>
       <script src = "ScreenCoordinate.js"></script>
       <script src = "Square.js"></script>
+      <script src = "Shape.js"></script>
       <script src = "IShape.js"></script>
       <script src = "JShape.js"></script>
+      <script src = "LShape.js"></script>
+      <script src = "OShape.js"></script>
+      <script src = "SShape.js"></script>
+      <script src = "TShape.js"></script>
+      <script src = "ZShape.js"></script>
    </head>
 
    <body>
@@ -18,13 +24,13 @@
          <tr>
             <td>
                <form>
-                  <input type="radio" name="shape" value="ishape">I-Shape<br />
-                  <input type="radio" name="shape" value="jshape">J-Shape<br />
-                  <input type="radio" name="shape" value="lshape">L-Shape<br />
-                  <input type="radio" name="shape" value="oshape">O-Shape<br />
-                  <input type="radio" name="shape" value="sshape">S-Shape<br />
-                  <input type="radio" name="shape" value="tshape">T-Shape<br />
-                  <input type="radio" name="shape" value="zshape">Z-Shape<br />
+                  <input type="radio" name="shape" value="ishape" onclick="getShape(new IShape());">I-Shape<br />
+                  <input type="radio" name="shape" value="jshape" onclick="getShape(new JShape());">J-Shape<br />
+                  <input type="radio" name="shape" value="lshape" onclick="getShape(new LShape());">L-Shape<br />
+                  <input type="radio" name="shape" value="oshape" onclick="getShape(new OShape());">O-Shape<br />
+                  <input type="radio" name="shape" value="sshape" onclick="getShape(new SShape());">S-Shape<br />
+                  <input type="radio" name="shape" value="tshape" onclick="getShape(new TShape());">T-Shape<br />
+                  <input type="radio" name="shape" value="zshape" onclick="getShape(new ZShape());">Z-Shape<br />
                </form>
             </td>
             <td>
@@ -37,13 +43,14 @@
 		<!--
 var svg = document.body.getElementsByTagName("svg")[0];
 
-var center = new ScreenCoordinate();
-center.setXCoordinate(50);
-center.setYCoordinate(50);
+function getShape(shape) {
+	var center = new ScreenCoordinate();
+	center.setXCoordinate(50);
+	center.setYCoordinate(50);
 
-var shape = new JShape();
-shape.setColor(Color.BLUE);
-shape.appendTo(svg, center);
+	shape.setColor(Color.BLUE);
+	shape.appendTo(svg, center);
+}
 
 		//-->
 		</script>
