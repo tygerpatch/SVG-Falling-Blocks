@@ -16,6 +16,8 @@ function Shape() {
 
    this.appendTo = Shape_appendTo;
    this.detachFrom = Shape_detachFrom;
+
+   this.rotate = Shape_rotate;
 }
 
 
@@ -56,5 +58,20 @@ function Shape_detachFrom(svg) {
    for(index in this.squares) {
       square = this.squares[index];
       square.detachFrom(svg);
+   }
+}
+
+function Shape_rotate() {
+   var position, row, column;
+
+   // for each square in the shape
+   for(index in this.positions) {
+      position = this.positions[index];
+
+      row = position.getRow();
+      column = position.getColumn();
+
+      position.setRow(column);
+      position.setColumn(-row);
    }
 }
