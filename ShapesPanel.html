@@ -24,13 +24,13 @@
          <tr>
             <td>
                <form>
-                  <input type="radio" name="shape" value="ishape" onclick="getShape(new IShape());">I-Shape<br />
-                  <input type="radio" name="shape" value="jshape" onclick="getShape(new JShape());">J-Shape<br />
-                  <input type="radio" name="shape" value="lshape" onclick="getShape(new LShape());">L-Shape<br />
-                  <input type="radio" name="shape" value="oshape" onclick="getShape(new OShape());">O-Shape<br />
-                  <input type="radio" name="shape" value="sshape" onclick="getShape(new SShape());">S-Shape<br />
-                  <input type="radio" name="shape" value="tshape" onclick="getShape(new TShape());">T-Shape<br />
-                  <input type="radio" name="shape" value="zshape" onclick="getShape(new ZShape());">Z-Shape<br />
+                  <input type="radio" name="shape" value="ishape" onclick="showShape(0);">I-Shape<br />
+                  <input type="radio" name="shape" value="jshape" onclick="showShape(1);">J-Shape<br />
+                  <input type="radio" name="shape" value="lshape" onclick="showShape(2);">L-Shape<br />
+                  <input type="radio" name="shape" value="oshape" onclick="showShape(3);">O-Shape<br />
+                  <input type="radio" name="shape" value="sshape" onclick="showShape(4);">S-Shape<br />
+                  <input type="radio" name="shape" value="tshape" onclick="showShape(5);">T-Shape<br />
+                  <input type="radio" name="shape" value="zshape" onclick="showShape(6);">Z-Shape<br />
                </form>
             </td>
             <td>
@@ -39,22 +39,38 @@
          </tr>
       </table>
 
-		<script type="text/javascript">
-		<!--
+      <script type="text/javascript">
+      <!--
 var svg = document.body.getElementsByTagName("svg")[0];
 
-function getShape(shape) {
-	var center = new ScreenCoordinate();
-	center.setXCoordinate(50);
-	center.setYCoordinate(50);
+var shapes = new Array()
 
-	shape.setColor(Color.BLUE);
-	shape.appendTo(svg, center);
+shapes[0] = new IShape();
+shapes[1] = new JShape();
+shapes[2] = new LShape();
+shapes[3] = new OShape();
+shapes[4] = new SShape();
+shapes[5] = new TShape();
+shapes[6] = new ZShape();
+
+var oldShape;
+
+function showShape(index) {
+   var center = new ScreenCoordinate();
+   center.setXCoordinate(50);
+   center.setYCoordinate(50);
+
+   if(oldShape != undefined) {
+      oldShape.detachFrom(svg);
+   }
+
+   var shape = shapes[index];
+   shape.setColor(Color.BLUE);
+   shape.appendTo(svg, center);
+   oldShape = shape;
 }
 
-		//-->
-		</script>
-
-
+      //-->
+      </script>
    </body>
 </html>

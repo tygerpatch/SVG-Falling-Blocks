@@ -15,6 +15,7 @@ function Square() {
    this.setSize = Square_setSize;
 
    this.appendTo = Square_appendTo;
+   this.detachFrom = Square_detachFrom;
 }
 
 function Square_getSize() {
@@ -34,7 +35,6 @@ function Square_getColor() {
    return this.rect.getAttribute("fill");
 }
 
-// TODO: detachFrom(svg)
 function Square_appendTo(svg) {
    svg.appendChild(this.rect);
 }
@@ -45,4 +45,8 @@ function Square_setXCoordinate(x) {
 
 function Square_setYCoordinate(y) {
    this.rect.setAttribute("y", y);
+}
+
+function Square_detachFrom(svg) {
+   svg.removeChild(this.rect);
 }

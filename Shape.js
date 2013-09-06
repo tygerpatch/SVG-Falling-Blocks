@@ -15,6 +15,7 @@ function Shape() {
    }
 
    this.appendTo = Shape_appendTo;
+   this.detachFrom = Shape_detachFrom;
 }
 
 
@@ -48,5 +49,12 @@ function Shape_appendTo(svg, center) {
       square.setYCoordinate(y);
 
       square.appendTo(svg);
+   }
+}
+
+function Shape_detachFrom(svg) {
+   for(index in this.squares) {
+      square = this.squares[index];
+      square.detachFrom(svg);
    }
 }
