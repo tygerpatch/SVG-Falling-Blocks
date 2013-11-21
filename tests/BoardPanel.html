@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC
+   "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+   <head>
+      <script src = "../javascript/Color.js"></script>
+      <script src = "../javascript/Square.js"></script>
+      <script src = "../javascript/Shape.js"></script>
+      <script src = "../javascript/Position.js"></script>
+      <script src = "../javascript/Board.js"></script>
+
+      <script src = "../javascript/shapes/IShape.js"></script>
+      <script src = "../javascript/shapes/JShape.js"></script>
+      <script src = "../javascript/shapes/LShape.js"></script>
+      <script src = "../javascript/shapes/OShape.js"></script>
+      <script src = "../javascript/shapes/SShape.js"></script>
+      <script src = "../javascript/shapes/TShape.js"></script>
+      <script src = "../javascript/shapes/ZShape.js"></script>
+   </head>
+
+   <body>
+      <table border = "1">
+         <tr>
+            <td>
+               <form name = "myForm">
+                  <input type="radio" name="shape" value="ishape" onclick="showShape(0);">I-Shape<br />
+                  <input type="radio" name="shape" value="jshape" onclick="showShape(1);">J-Shape<br />
+                  <input type="radio" name="shape" value="lshape" onclick="showShape(2);">L-Shape<br />
+                  <input type="radio" name="shape" value="oshape" onclick="showShape(3);">O-Shape<br />
+                  <input type="radio" name="shape" value="sshape" onclick="showShape(4);">S-Shape<br />
+                  <input type="radio" name="shape" value="tshape" onclick="showShape(5);">T-Shape<br />
+                  <input type="radio" name="shape" value="zshape" onclick="showShape(6);">Z-Shape<br />
+                  <input type="button" id="btnToggle" value="move" onclick="doToggle();">
+               </form>
+            </td>
+            <td style = "width:150px; height:100px; overflow: visible;">
+               <svg xmlns="http://www.w3.org/2000/svg"></svg>
+            </td>
+         </tr>
+      </table>
+
+      <script type="text/javascript">
+      <!--
+var svg = document.body.getElementsByTagName("svg")[0];
+
+svg.setAttribute("height", Board.NUMBER_ROWS * 20);
+svg.setAttribute("width", Board.NUMBER_COLUMNS * 20);
+
+var board = new Board();
+board.appendTo(svg);
+
+var shapes = new Array()
+
+shapes[0] = new IShape();
+shapes[1] = new JShape();
+shapes[2] = new LShape();
+shapes[3] = new OShape();
+shapes[4] = new SShape();
+shapes[5] = new TShape();
+shapes[6] = new ZShape();
+
+var shape;
+
+function showShape(index) {
+   if(shape != undefined) {
+      shape.detachFrom(svg);
+   }
+
+   shape = shapes[index];
+   shape.setColor(Color.BLUE);
+
+   shape.appendTo(svg, 0, 0);
+
+   var squares = shape.getSquares();
+   var positions = shape.getPositions();
+   var color = shape.getColor();
+
+   for(index in positions) {
+      position = positions[index];
+
+      row = position.getRow();
+      column = position.getColumn();
+
+      board.place(squares[index], row, column);
+   }
+}
+
+function onKeyPress(event) {
+   var keyCode = (event.keyCode || event.charCode);
+
+   // up
+   if(keyCode == 38) {
+      shape.rotate();         
+   }
+   // right
+   if(keyCode == 39) {
+      shape.right();
+   }
+   // left
+   if(keyCode == 37) {
+      shape.left();
+   }
+   // space, down
+   if((keyCode == 32) || (keyCode == 40)){
+      shape.drop();
+   }
+}
+
+function doToggle() {
+   var btn = document.getElementById("btnToggle");
+   var value = btn.getAttribute("value");
+   var radios = document.myForm.shape;
+
+   if(value == "move") {
+      for(var i = 0; i < radios.length; i++) {
+         radios[i].disabled = true;
+      }
+
+      document.onkeypress = onKeyPress;
+      btn.setAttribute("value", "select");
+   }
+   else {
+      for(var i = 0; i < radios.length; i++) {
+         radios[i].disabled = false;
+      }
+
+      document.onkeypress = undefined;
+      btn.setAttribute("value", "move");
+   }
+}
+
+      //-->
+      </script>
+   </body>
+</html>

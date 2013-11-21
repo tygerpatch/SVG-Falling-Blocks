@@ -10,3 +10,4 @@ Color.ORANGE = "Orange";
 Color.PINK = "Pink";
 Color.RED = "Red";
 Color.YELLOW = "Yellow";
+Color.NONE = "None";

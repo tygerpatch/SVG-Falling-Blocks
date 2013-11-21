@@ -6,7 +6,10 @@ function Square() {
    this.rect.setAttribute("strokeWidth", "1");
 
    this.setXCoordinate = Square_setXCoordinate;
+   this.getXCoordinate = Square_getXCoordinate;
+
    this.setYCoordinate = Square_setYCoordinate;
+   this.getYCoordinate = Square_getYCoordinate;
 
    this.getColor = Square_getColor;
    this.setColor = Square_setColor;
@@ -19,7 +22,7 @@ function Square() {
 }
 
 function Square_getSize() {
-   return this.rect.getAttribute("width");
+   return parseInt(this.rect.getAttribute("width"));
 }
 
 function Square_setSize(size) {
@@ -35,16 +38,24 @@ function Square_getColor() {
    return this.rect.getAttribute("fill");
 }
 
-function Square_appendTo(svg) {
-   svg.appendChild(this.rect);
-}
-
 function Square_setXCoordinate(x) {
    this.rect.setAttribute("x", x);
 }
 
+function Square_getXCoordinate() {
+   return parseInt(this.rect.getAttribute("x"));
+}
+
 function Square_setYCoordinate(y) {
    this.rect.setAttribute("y", y);
+}
+
+function Square_getYCoordinate() {
+   return parseInt(this.rect.getAttribute("y"));
+}
+
+function Square_appendTo(svg) {
+   svg.appendChild(this.rect);
 }
 
 function Square_detachFrom(svg) {

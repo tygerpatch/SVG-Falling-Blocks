@@ -10,6 +10,9 @@ function IShape() {
 
    this.positions[3].setRow(1);
    this.positions[3].setColumn(0);
+
+   this.center.setRow(2);
+   this.center.setColumn(4);
 }
 
 // IShape inherits from Shape

@@ -11,6 +11,9 @@ function JShape() {
 
    this.positions[3].setRow(2);
    this.positions[3].setColumn(0);
+
+   this.center.setRow(0);
+   this.center.setColumn(4);
 }
 
 // JShape inherits from Shape

@@ -5,18 +5,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 
    <head>
-      <script src = "Color.js"></script>
-      <script src = "Position.js"></script>
-      <script src = "ScreenCoordinate.js"></script>
-      <script src = "Square.js"></script>
-      <script src = "Shape.js"></script>
-      <script src = "IShape.js"></script>
-      <script src = "JShape.js"></script>
-      <script src = "LShape.js"></script>
-      <script src = "OShape.js"></script>
-      <script src = "SShape.js"></script>
-      <script src = "TShape.js"></script>
-      <script src = "ZShape.js"></script>
+      <script src = "../javascript/Color.js"></script>
+      <script src = "../javascript/Position.js"></script>
+      <script src = "../javascript/Square.js"></script>
+      <script src = "../javascript/Shape.js"></script>
+
+      <script src = "../javascript/shapes/IShape.js"></script>
+      <script src = "../javascript/shapes/JShape.js"></script>
+      <script src = "../javascript/shapes/LShape.js"></script>
+      <script src = "../javascript/shapes/OShape.js"></script>
+      <script src = "../javascript/shapes/SShape.js"></script>
+      <script src = "../javascript/shapes/TShape.js"></script>
+      <script src = "../javascript/shapes/ZShape.js"></script>
    </head>
 
    <body>
@@ -56,10 +56,6 @@ shapes[6] = new ZShape();
 
 var shape;
 
-var center = new ScreenCoordinate();
-center.setXCoordinate(50);
-center.setYCoordinate(50);
-
 function showShape(index) {
 
    if(shape != undefined) {
@@ -68,17 +64,16 @@ function showShape(index) {
 
    shape = shapes[index];
    shape.setColor(Color.BLUE);
-   shape.appendTo(svg, center);
+   shape.appendTo(svg, 50, 50);
 }
 
 function onKeyPress(event) {
    var keyCode = (event.keyCode || event.charCode);
 
-   // right
+   // up
    if(keyCode == 38) {
       if(shape != undefined) {
          shape.rotate();
-         shape.appendTo(svg, center);
       }
    }
 }
@@ -87,7 +82,6 @@ function toggle() {
    var btn = document.getElementById("btnToggle");
    var value = btn.getAttribute("value");
    var radios = document.myForm.shape;
-
 
    if(value == "rotate") {
       for(var i = 0; i < radios.length; i++) {

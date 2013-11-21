@@ -11,6 +11,9 @@ function ZShape() {
 
    this.positions[3].setRow(0);
    this.positions[3].setColumn(1);
+
+   this.center.setRow(1);
+   this.center.setColumn(5);
 }
 
 // ZShape inherits from Shape

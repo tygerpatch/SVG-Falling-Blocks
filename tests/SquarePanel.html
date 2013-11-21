@@ -4,9 +4,9 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
    <head>
-      <script src = "Square.js"></script>
-      <script src = "Position.js"></script>
-      <script src = "Color.js"></script>
+      <script src = "../javascript/Square.js"></script>
+      <script src = "../javascript/Position.js"></script>
+      <script src = "../javascript/Color.js"></script>
    </head>
    <body>
       <svg xmlns="http://www.w3.org/2000/svg"></svg>
@@ -16,14 +16,19 @@
 
 var svg = document.body.getElementsByTagName("svg")[0];
 
-var square = new Square();
+function newSquare(x, y, size, color) {
+   var square = new Square();
 
-square.setXCoordinate(20);
-square.setYCoordinate(20);
-square.setSize(20);
-square.setColor(Color.GREEN);
+   square.setXCoordinate(x);
+   square.setYCoordinate(y);
+   square.setSize(size);
+   square.setColor(color);
 
-square.appendTo(svg);
+   square.appendTo(svg);
+}
+
+newSquare(20, 20, 20, Color.GREEN);
+newSquare(60, 20, 20, Color.NONE);
 
       //-->
       </script>
