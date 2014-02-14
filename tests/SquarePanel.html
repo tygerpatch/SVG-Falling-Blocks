@@ -9,26 +9,42 @@
       <script src = "../javascript/Color.js"></script>
    </head>
    <body>
-      <svg xmlns="http://www.w3.org/2000/svg"></svg>
+
+      <table border = "1">
+         <tr>
+            <td>
+               <form name = "myForm">
+                  <input type="radio" name="color" onclick="square.setColor(Color.BLACK);">Black<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.BLUE);">Blue<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.CYAN);">Cyan<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.GREEN);" checked="checked">Green<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.MAGENTA);">Magenta<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.ORANGE);">Orange<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.PINK);">Pink<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.RED);">Red<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.YELLOW);">Yellow<br />
+                  <input type="radio" name="color" onclick="square.setColor(Color.NONE);">None<br />
+               </form>
+            </td>
+            <td style = "width:50px; overflow: visible;">
+               <svg xmlns="http://www.w3.org/2000/svg"></svg>
+            </td>
+         </tr>
+      </table>
 
       <script type="text/javascript">
       <!--
 
 var svg = document.body.getElementsByTagName("svg")[0];
 
-function newSquare(x, y, size, color) {
-   var square = new Square();
+var square = new Square();
 
-   square.setXCoordinate(x);
-   square.setYCoordinate(y);
-   square.setSize(size);
-   square.setColor(color);
+square.setXCoordinate(20);
+square.setYCoordinate(20);
+square.setColor(Color.GREEN);
+square.setSize(20);
 
-   square.appendTo(svg);
-}
-
-newSquare(20, 20, 20, Color.GREEN);
-newSquare(60, 20, 20, Color.NONE);
+square.appendTo(svg);
 
       //-->
       </script>
