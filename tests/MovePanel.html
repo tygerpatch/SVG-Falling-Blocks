@@ -31,10 +31,10 @@
                   <input type="radio" name="shape" value="sshape" onclick="showShape(4);">S-Shape<br />
                   <input type="radio" name="shape" value="tshape" onclick="showShape(5);">T-Shape<br />
                   <input type="radio" name="shape" value="zshape" onclick="showShape(6);">Z-Shape<br />
-                  <input type="button" id="btnToggle" value="rotate" onclick="toggle();">
+                  <input type="button" id="btnToggle" value="move" onclick="toggle();">
                </form>
             </td>
-            <td style = "width:150px; height:100px; overflow: visible;">
+            <td id = "svg_td" style = "overflow: visible;">
                <svg xmlns="http://www.w3.org/2000/svg"></svg>
             </td>
          </tr>
@@ -43,7 +43,47 @@
       <script type="text/javascript">
       <!--
 
+// dimensions of board
+var NUMBER_COLUMNS = 10;
+var NUMBER_ROWS = 15;
+
+var td = document.getElementById("svg_td");
+td.style.width = (NUMBER_COLUMNS * Shape.SQUARE_SIZE) + "px";
+td.style.height = (NUMBER_ROWS * Shape.SQUARE_SIZE) + "px";
+
 var svg = document.body.getElementsByTagName("svg")[0];
+
+var board = new Array(NUMBER_ROWS);
+
+for(var row = 0; row < board.length; row++) {
+   board[row] = new Array(NUMBER_COLUMNS);
+
+   for(var column = 0; column < board[row].length; column++) {
+      board[row][column] = Color.BLACK;
+   }
+}
+
+var square = new Square();
+
+board[0][0] = Color.RED;
+
+square.setSize(Shape.SQUARE_SIZE);
+square.setColor(Color.RED);
+square.setXCoordinate(0);
+square.setYCoordinate(0);
+square.appendTo(svg);
+
+board[1][4] = Color.RED;
+
+square = new Square();
+
+square.setSize(Shape.SQUARE_SIZE);
+square.setColor(Color.RED);
+square.setXCoordinate(4 * Shape.SQUARE_SIZE);
+square.setYCoordinate(Shape.SQUARE_SIZE);
+square.appendTo(svg);
+
+var shapes = new Array()
 
 var shape;
 
@@ -80,42 +120,85 @@ function showShape(index) {
    shape.setColor(Color.BLUE);
    shape.appendTo(svg);
 
-   shape.setTop(3 * Shape.SQUARE_SIZE);
-   shape.setLeft(3 * Shape.SQUARE_SIZE);
+   shape.setLeft(Shape.SQUARE_SIZE * 2);
+   shape.setTop(Shape.SQUARE_SIZE * 2);
 }
+
+document.onkeypress = onKeyPress;
+
+var LEFT_ARROW_KEY = 37;
+var RIGHT_ARROW_KEY = 39;
 
 function onKeyPress(event) {
    var keyCode = (event.keyCode || event.charCode);
 
-   // up
-   if(keyCode == 38) {
-      if(shape != undefined) {
-         rotate_shape();
-      }
+   if(keyCode == LEFT_ARROW_KEY) {
+      move_left();
    }
+
+   if(keyCode == RIGHT_ARROW_KEY) {
+      move_right();
+   }   
 }
 
-function rotate_shape() {
+function move_left() {
+
    var squares = shape.getSquares();
-   var tmp, row, col;
-
-   var crow = shape.getTop()/Shape.SQUARE_SIZE;
-   var ccol = shape.getLeft()/Shape.SQUARE_SIZE;
-
+   var tmp, row, column;
 
    // for each square in shape
    for(var i = 0; i < squares.length; i++) {
-      tmp = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE) - crow;
-      col = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE) - ccol;
+      column = ((squares[i].getXCoordinate() - Shape.SQUARE_SIZE)/Shape.SQUARE_SIZE);
+      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
 
-      row = col;
-      col = -tmp;
+      if((column < 0) || (column >= NUMBER_COLUMNS)) {
+         return;
+      }
 
-      squares[i].setYCoordinate((row + crow) * Shape.SQUARE_SIZE);
-      squares[i].setXCoordinate((col + ccol) * Shape.SQUARE_SIZE);
+      if((row < 0) || (row >= NUMBER_ROWS)) {
+         return;
+      }
+
+      if(Color.BLACK != board[row][column]) {
+         return;
+      }
    }
 
+   // for each square in shape
+   for(var i = 0; i < squares.length; i++) {
+      // move square one space to the left
+      squares[i].setXCoordinate(squares[i].getXCoordinate() - Shape.SQUARE_SIZE);
+   }
+}
 
+function move_right() {
+
+   var squares = shape.getSquares();
+   var row, column;
+
+   // for each square in shape
+   for(var i = 0; i < squares.length; i++) {
+      column = ((squares[i].getXCoordinate() + Shape.SQUARE_SIZE)/Shape.SQUARE_SIZE);
+      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
+
+      if((column < 0) || (column >= NUMBER_COLUMNS)) {
+         return;
+      }
+
+      if((row < 0) || (row >= NUMBER_ROWS)) {
+         return;
+      }
+
+      if(Color.BLACK != board[row][column]) {
+         return;
+      }
+   }
+
+   // for each square in shape
+   for(var i = 0; i < squares.length; i++) {
+      // move square one space to the left
+      squares[i].setXCoordinate(squares[i].getXCoordinate() + Shape.SQUARE_SIZE);
+   }
 }
 
 function toggle() {
@@ -123,7 +206,7 @@ function toggle() {
    var value = btn.getAttribute("value");
    var radios = document.myForm.shape;
 
-   if(value == "rotate") {
+   if(value == "move") {
       for(var i = 0; i < radios.length; i++) {
          radios[i].disabled = true;
       }
@@ -137,7 +220,7 @@ function toggle() {
       }
 
       document.onkeypress = undefined;
-      btn.setAttribute("value", "rotate");
+      btn.setAttribute("value", "move");
    }
 }
 

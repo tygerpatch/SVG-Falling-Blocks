@@ -8,8 +8,6 @@
       <script src = "../javascript/Color.js"></script>
       <script src = "../javascript/Square.js"></script>
       <script src = "../javascript/Shape.js"></script>
-      <script src = "../javascript/Position.js"></script>
-      <script src = "../javascript/Board.js"></script>
    </head>
    <body>
       <div style = "width:150px; height:100px; overflow: visible;">
@@ -18,61 +16,81 @@
 
       <script type="text/javascript">
       <!--
+// dimensions of board
+var NUMBER_COLUMNS = 10;
+var NUMBER_ROWS = 15;
+
 var svg = document.body.getElementsByTagName("svg")[0];
 
-svg.setAttribute("height", Board.NUMBER_ROWS * 20);
-svg.setAttribute("width", Board.NUMBER_COLUMNS * 20);
+svg.setAttribute("height", NUMBER_ROWS * 20);
+svg.setAttribute("width", NUMBER_COLUMNS * 20);
 
 // draw board grid
-var board = new Board();
-board.appendTo(svg);
+var board = new Array(NUMBER_ROWS);
+var square;
 
-var squares = new Array(Board.NUMBER_COLUMNS);
+for(var row = 0; row < board.length; row++) {
+   board[row] = new Array(NUMBER_COLUMNS);
 
-for(var row = 0; row < Board.NUMBER_COLUMNS; row++) {
-	squares[row] = new Square( );
-	squares[row].setSize(20);
-	squares[row].setColor(Color.GREEN);
+   for(var column = 0; column < board[row].length; column++) {
+      square = new Square();
+      square.setSize(Shape.SQUARE_SIZE);
+      square.setColor(Color.NONE);
 
-	squares[row].setYCoordinate(0);
-	squares[row].setXCoordinate(row * 20);
-	squares[row].appendTo(svg);
+      square.setYCoordinate(row * Shape.SQUARE_SIZE);
+      square.setXCoordinate(column * Shape.SQUARE_SIZE);
+
+      board[row][column] = square;
+      board[row][column].appendTo(svg);
+   }
+}
+
+var squares = new Array(NUMBER_COLUMNS);
+
+for(var row = 0; row < NUMBER_COLUMNS; row++) {
+   squares[row] = new Square();
+   squares[row].setSize(Shape.SQUARE_SIZE);
+   squares[row].setColor(Color.GREEN);
+
+   squares[row].setYCoordinate(0);
+   squares[row].setXCoordinate(row * Shape.SQUARE_SIZE);
+   squares[row].appendTo(svg);
 }
 
 var isHighlighted = false;
 
 function drop() {
-	if(isHighlighted) {
-		// clear row, draw new row at top
-		for(var row = 0; row < Board.NUMBER_COLUMNS; row++) {
-			squares[row].setColor(Color.GREEN);
-			squares[row].setYCoordinate(0);
-		}
+   if(isHighlighted) {
+      // clear row, draw new row at top
+      for(var row = 0; row < NUMBER_COLUMNS; row++) {
+         squares[row].setColor(Color.GREEN);
+         squares[row].setYCoordinate(0);
+      }
 
-		isHighlighted = false;
-		return;
-	}
+      isHighlighted = false;
+      return;
+   }
 
-	var yCoordinate = squares[0].getYCoordinate() + 20;
+   var yCoordinate = squares[0].getYCoordinate() + Shape.SQUARE_SIZE;
 
-	// if at bottom of board
-	if(yCoordinate == (Board.NUMBER_ROWS * 20)) {
+   // if at bottom of board
+   if(yCoordinate == (NUMBER_ROWS * Shape.SQUARE_SIZE)) {
 
-		// highlight row
-		for(var row = 0; row < Board.NUMBER_COLUMNS; row++) {
-			squares[row].setColor(Color.YELLOW);
-		}
+      // highlight row
+      for(var row = 0; row < NUMBER_COLUMNS; row++) {
+         squares[row].setColor(Color.YELLOW);
+      }
 
-		isHighlighted = true;
-		return;
-	}
+      isHighlighted = true;
+      return;
+   }
 
-	for(var row = 0; row < Board.NUMBER_COLUMNS; row++) {
-		yCoordinate = squares[row].getYCoordinate() + 20;
-		squares[row].setYCoordinate(yCoordinate);
-	}
+   for(var row = 0; row < NUMBER_COLUMNS; row++) {
+      yCoordinate = squares[row].getYCoordinate() + Shape.SQUARE_SIZE;
+      squares[row].setYCoordinate(yCoordinate);
+   }
 
-	//window.clearInterval(interval); // stop timer
+   //window.clearInterval(interval); // stop timer
 }
 
 window.setInterval(drop, 500);
