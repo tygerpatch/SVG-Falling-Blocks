@@ -80,8 +80,13 @@ function showShape(index) {
    shape.setColor(Color.BLUE);
    shape.appendTo(svg);
 
-   shape.setTop(3 * Shape.SQUARE_SIZE);
-   shape.setLeft(3 * Shape.SQUARE_SIZE);
+   var squares = shape.getSquares();
+
+   // for each square in shape
+   for(var i = 0; i < squares.length; i++) {
+      squares[i].setXCoordinate(squares[i].getXCoordinate() + (3 * Shape.SQUARE_SIZE));
+      squares[i].setYCoordinate(squares[i].getYCoordinate() + (3 * Shape.SQUARE_SIZE));
+   }
 }
 
 function onKeyPress(event) {
@@ -99,8 +104,8 @@ function rotate_shape() {
    var squares = shape.getSquares();
    var tmp, row, col;
 
-   var crow = shape.getTop()/Shape.SQUARE_SIZE;
-   var ccol = shape.getLeft()/Shape.SQUARE_SIZE;
+   var crow = squares[0].getYCoordinate()/Shape.SQUARE_SIZE;
+   var ccol = squares[0].getXCoordinate()/Shape.SQUARE_SIZE;
 
 
    // for each square in shape
@@ -114,8 +119,6 @@ function rotate_shape() {
       squares[i].setYCoordinate((row + crow) * Shape.SQUARE_SIZE);
       squares[i].setXCoordinate((col + ccol) * Shape.SQUARE_SIZE);
    }
-
-
 }
 
 function toggle() {

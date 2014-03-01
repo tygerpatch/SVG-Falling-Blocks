@@ -37,33 +37,6 @@ function Shape() {
 			this.squares[i].detachFrom(svg);
 		}
 	}
-
-	this.top = 0;
-	this.left = 0;
-
-	this.getLeft = function() {
-		return this.left;
-	}
-
-	this.setLeft = function(left) {
-		this.left = left;
-
-		for(var i = 0; i < this.squares.length; i++) {
-			this.squares[i].setXCoordinate(this.squares[i].getXCoordinate() + this.left);
-		}
-	}
-
-	this.getTop = function() {
-		return this.top;
-	}
-
-	this.setTop = function(top) {
-		this.top = top;
-
-		for(var i = 0; i < this.squares.length; i++) {
-			this.squares[i].setYCoordinate(this.squares[i].getYCoordinate() + this.top);
-		}
-	}
 }
 
 Shape.SQUARE_SIZE = 20;

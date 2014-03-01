@@ -47,82 +47,109 @@
 var NUMBER_COLUMNS = 10;
 var NUMBER_ROWS = 15;
 
-var td = document.getElementById("svg_td");
-td.style.width = (NUMBER_COLUMNS * Shape.SQUARE_SIZE) + "px";
-td.style.height = (NUMBER_ROWS * Shape.SQUARE_SIZE) + "px";
-
 var svg = document.body.getElementsByTagName("svg")[0];
 
+svg.setAttribute("height", NUMBER_ROWS * 20);
+svg.setAttribute("width", NUMBER_COLUMNS * 20);
+
+// draw board grid
 var board = new Array(NUMBER_ROWS);
+var square;
 
 for(var row = 0; row < board.length; row++) {
    board[row] = new Array(NUMBER_COLUMNS);
 
    for(var column = 0; column < board[row].length; column++) {
-      board[row][column] = Color.BLACK;
+      square = new Square();
+      square.setSize(Shape.SQUARE_SIZE);
+      square.setColor(Color.NONE);
+
+      square.setYCoordinate(row * Shape.SQUARE_SIZE);
+      square.setXCoordinate(column * Shape.SQUARE_SIZE);
+
+      board[row][column] = square;
+      board[row][column].appendTo(svg);
    }
 }
 
-var square = new Square();
+board[1][1].setColor(Color.RED);
+board[1][7].setColor(Color.RED);
 
-board[0][0] = Color.RED;
+var shape = getShape(0);
+shape.appendTo(svg);
+shape.setColor(Color.GREEN);
 
-square.setSize(Shape.SQUARE_SIZE);
-square.setColor(Color.RED);
-square.setXCoordinate(0);
-square.setYCoordinate(0);
-square.appendTo(svg);
-
-board[1][4] = Color.RED;
-
-square = new Square();
-
-square.setSize(Shape.SQUARE_SIZE);
-square.setColor(Color.RED);
-square.setXCoordinate(4 * Shape.SQUARE_SIZE);
-square.setYCoordinate(Shape.SQUARE_SIZE);
-square.appendTo(svg);
-
-var shapes = new Array()
-
-var shape;
-
-showShape(0);
-
-function showShape(index) {
-
+function showShape(i) {
+   // remove old shape
    if(shape != undefined) {
       shape.detachFrom(svg);
    }
 
-   if(index == 0) {
-      shape = new IShape();
-   }
-   else if(index == 1) {
-      shape = new JShape();
-   }
-   else if(index == 2) {
-      shape = new LShape();
-   }
-   else if(index == 3) {
-      shape = new OShape();
-   }
-   else if(index == 4) {
-      shape = new SShape();
-   }
-   else if(index == 5) {
-      shape = new TShape();
-   }
-   else if(index == 6) {
-      shape = new ZShape();
-   }
-
-   shape.setColor(Color.BLUE);
+   shape = getShape(i);
    shape.appendTo(svg);
-
-   shape.setLeft(Shape.SQUARE_SIZE * 2);
-   shape.setTop(Shape.SQUARE_SIZE * 2);
+   shape.setColor(Color.GREEN);
 }
+
+function getShape(i) {
+   var xOffset = 0;
+   var yOffset = 0;
+   var shape;
+
+   if(i == 0) {
+      shape = new IShape();
+
+      // move shape 5-squares to the right
+      xOffset = (5 * Shape.SQUARE_SIZE);
+
+      // move shape 3-squares down
+      yOffset = (3 * Shape.SQUARE_SIZE);
+   }
+   else if(i == 1) {
+      shape = new JShape();
+
+      xOffset = (4 * Shape.SQUARE_SIZE);
+   }
+   else if(i == 2) {
+      shape = new LShape();
+
+      xOffset = (5 * Shape.SQUARE_SIZE);
+   }
+   else if(i == 3) {
+      shape = new OShape();
+
+      xOffset = (4 * Shape.SQUARE_SIZE);
+      yOffset = Shape.SQUARE_SIZE;
+   }
+   else if(i == 4) {
+      shape = new SShape(); // can't move
+
+      xOffset = (4 * Shape.SQUARE_SIZE);
+      yOffset = Shape.SQUARE_SIZE;
+   }
+   else if(i == 5) {
+      shape = new TShape();
+
+      xOffset = (4 * Shape.SQUARE_SIZE);
+      yOffset = Shape.SQUARE_SIZE;
+   }
+   else if(i == 6) {
+      shape = new ZShape();
+
+      xOffset = (5 * Shape.SQUARE_SIZE);
+      yOffset = Shape.SQUARE_SIZE;
+   }
+
+   var squares = shape.getSquares();
+
+   // for each square in shape
+   for(var i = 0; i < squares.length; i++) {
+      squares[i].setXCoordinate(squares[i].getXCoordinate() + xOffset);
+      squares[i].setYCoordinate(squares[i].getYCoordinate() + yOffset);
+   }
+
+   return shape;
+}
+
 
 document.onkeypress = onKeyPress;
 
@@ -159,7 +186,7 @@ function move_left() {
          return;
       }
 
-      if(Color.BLACK != board[row][column]) {
+      if(Color.NONE != board[row][column].getColor()) {
          return;
       }
    }
@@ -189,7 +216,7 @@ function move_right() {
          return;
       }
 
-      if(Color.BLACK != board[row][column]) {
+      if(Color.NONE != board[row][column].getColor()) {
          return;
       }
    }
