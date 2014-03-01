@@ -17,6 +17,10 @@
       <script src = "../javascript/shapes/SShape.js"></script>
       <script src = "../javascript/shapes/TShape.js"></script>
       <script src = "../javascript/shapes/ZShape.js"></script>
+
+      <script src = "../javascript/MoveShapeAction.js"></script>
+      <script src = "../javascript/actions/MoveShapeLeftAction.js"></script>
+      <script src = "../javascript/actions/MoveShapeRightAction.js"></script>
    </head>
 
    <body>
@@ -156,75 +160,18 @@ document.onkeypress = onKeyPress;
 var LEFT_ARROW_KEY = 37;
 var RIGHT_ARROW_KEY = 39;
 
+var moveLeft = new MoveShapeLeftAction(board);
+var moveRight = new MoveShapeRightAction(board);
+
 function onKeyPress(event) {
    var keyCode = (event.keyCode || event.charCode);
 
    if(keyCode == LEFT_ARROW_KEY) {
-      move_left();
+      moveLeft.execute(shape);
    }
 
    if(keyCode == RIGHT_ARROW_KEY) {
-      move_right();
-   }   
-}
-
-function move_left() {
-
-   var squares = shape.getSquares();
-   var tmp, row, column;
-
-   // for each square in shape
-   for(var i = 0; i < squares.length; i++) {
-      column = ((squares[i].getXCoordinate() - Shape.SQUARE_SIZE)/Shape.SQUARE_SIZE);
-      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
-
-      if((column < 0) || (column >= NUMBER_COLUMNS)) {
-         return;
-      }
-
-      if((row < 0) || (row >= NUMBER_ROWS)) {
-         return;
-      }
-
-      if(Color.NONE != board[row][column].getColor()) {
-         return;
-      }
-   }
-
-   // for each square in shape
-   for(var i = 0; i < squares.length; i++) {
-      // move square one space to the left
-      squares[i].setXCoordinate(squares[i].getXCoordinate() - Shape.SQUARE_SIZE);
-   }
-}
-
-function move_right() {
-
-   var squares = shape.getSquares();
-   var row, column;
-
-   // for each square in shape
-   for(var i = 0; i < squares.length; i++) {
-      column = ((squares[i].getXCoordinate() + Shape.SQUARE_SIZE)/Shape.SQUARE_SIZE);
-      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
-
-      if((column < 0) || (column >= NUMBER_COLUMNS)) {
-         return;
-      }
-
-      if((row < 0) || (row >= NUMBER_ROWS)) {
-         return;
-      }
-
-      if(Color.NONE != board[row][column].getColor()) {
-         return;
-      }
-   }
-
-   // for each square in shape
-   for(var i = 0; i < squares.length; i++) {
-      // move square one space to the left
-      squares[i].setXCoordinate(squares[i].getXCoordinate() + Shape.SQUARE_SIZE);
+      moveRight.execute(shape);
    }
 }
 
