@@ -25,33 +25,32 @@
    </head>
 
    <body>
-	<table border="1">
-		<tr>
-			<td rowspan="2">
-				<svg xmlns="http://www.w3.org/2000/svg" id = "spanBoard"></svg>
-			</td>
-			<td>
-				<svg xmlns="http://www.w3.org/2000/svg" id = "spanNext"></svg>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Score: <span id = "spanScore">0</span><br />
-				<br />
-				~ Instructions ~<br />
-				rotate shape ~ up arrow<br />
-				move left ~ left arrow<br />
-				move right ~ right arrow<br />
-				move down ~ down arrow or space bar<br />
-				pause/play ~ p key<br />
-			</td>
-		</tr>
-	</table>
+      <table border="1">
+         <tr>
+            <td rowspan="2">
+               <svg xmlns="http://www.w3.org/2000/svg" id = "spanBoard"></svg>
+            </td>
+            <td>
+               <svg xmlns="http://www.w3.org/2000/svg" id = "spanNext"></svg>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               Score: <span id = "spanScore">0</span><br />
+               <br />
+               ~ Instructions ~<br />
+               rotate shape ~ up arrow<br />
+               move left ~ left arrow<br />
+               move right ~ right arrow<br />
+               move down ~ down arrow or space bar<br />
+               pause/play ~ p key<br />
+            </td>
+         </tr>
+      </table>
 
       <script type="text/javascript">
       <!--
 
-// TODO: use shape in next shape window
 // TODO: allow player to play again
 // TODO: to reduce number of objects created, use an array of Shape objects and then copy their coordinates
 
@@ -130,8 +129,14 @@ shape.appendTo(spanBoard);
 getNextShape();
 
 function getRandomShape() {
-   // random number between 0 and 6
-   var i = Math.floor(Math.random() * 6);
+
+   if(nextShape == undefined) {
+      // random number between 0 and 6
+      var i = Math.floor(Math.random() * 6);
+   }
+   else {
+      i = nextShape;
+   }
 
    var xOffset = 0;
    var yOffset = 0;
@@ -311,8 +316,11 @@ function timedDrop() {
 
       // create a new shape
       shape = getRandomShape();
-      shape.setColor(colors[Math.floor(Math.random() * 5)]);
+      shape.setColor(nextColor);
       shape.appendTo(spanBoard);
+
+      getNextShape();
+
       return;
    }
 
@@ -365,6 +373,8 @@ function timedDrop() {
    }
 }
 
+var nextShape, nextColor;
+
 function getNextShape() {
    // random number between 0 and 6
    var i = Math.floor(Math.random() * 6);
@@ -386,13 +396,13 @@ function getNextShape() {
       shape = new JShape();
 
       xOffset = (2 * Shape.SQUARE_SIZE);
-	yOffset = Shape.SQUARE_SIZE;
+      yOffset = Shape.SQUARE_SIZE;
    }
    else if(i == 2) {
       shape = new LShape();
 
       xOffset = (3 * Shape.SQUARE_SIZE);
-	yOffset = Shape.SQUARE_SIZE;
+      yOffset = Shape.SQUARE_SIZE;
    }
    else if(i == 3) {
       shape = new OShape();
@@ -421,7 +431,15 @@ function getNextShape() {
 
    var squares = shape.getSquares();
    var row, column;
-   var color = colors[Math.floor(Math.random() * 5)];
+   nextColor = colors[Math.floor(Math.random() * 5)];
+   nextShape = i;
+
+   // clear out previous next shape
+   for(var row = 0; row < 6; row++) {
+      for(var column = 0; column < nextWindow[row].length; column++) {
+         nextWindow[row][column].setColor(Color.NONE);
+      }
+   }
 
    // for each square in shape
    for(var i = 0; i < squares.length; i++) {
@@ -431,10 +449,9 @@ function getNextShape() {
       column = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE);
       row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
 
-      nextWindow[row][column].setColor(color);
+      nextWindow[row][column].setColor(nextColor);
    }
 
-   //return shape;
 }
 
       //-->
