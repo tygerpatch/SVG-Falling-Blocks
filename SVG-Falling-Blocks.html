@@ -67,6 +67,8 @@ colors[3] = Color.MAGENTA;
 colors[4] = Color.ORANGE;
 colors[5] = Color.PINK;
 
+var gameOver = false;
+
 var shape = getRandomShape();
 shape.setColor(colors[Math.floor(Math.random() * 5)]);
 shape.appendTo(svg);
@@ -124,11 +126,20 @@ function getRandomShape() {
    }
 
    var squares = shape.getSquares();
+   var row, column;
 
    // for each square in shape
    for(var i = 0; i < squares.length; i++) {
       squares[i].setXCoordinate(squares[i].getXCoordinate() + xOffset);
       squares[i].setYCoordinate(squares[i].getYCoordinate() + yOffset);
+
+      column = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE);
+      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
+
+      if(board[row][column].getColor() != Color.NONE) {
+         gameOver = true;
+         window.clearInterval(interval);
+      }
    }
 
    return shape;
@@ -155,6 +166,10 @@ function onKeyPress(event) {
    var keyCode = (event.keyCode || event.charCode);
 
    // alert("keyCode = " + keyCode); // Keep for other keyCodes
+
+   if((shape == undefined) || gameOver) {
+      return;
+   }
 
    if(paused) {
       // unpause game
@@ -290,8 +305,7 @@ function timedDrop() {
 // TODO: next piece window
 // TODO: display user's score
 // TODO: display instructions for how to play
-
-// BUG: Game doesn't end when board is filled up
+// TODO: allow player to play again
 
       //-->
       </script>
