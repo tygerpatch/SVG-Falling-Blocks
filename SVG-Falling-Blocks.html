@@ -28,9 +28,11 @@
 	<table border="1">
 		<tr>
 			<td rowspan="2">
-				<svg xmlns="http://www.w3.org/2000/svg"></svg>
+				<svg xmlns="http://www.w3.org/2000/svg" id = "spanBoard"></svg>
 			</td>
-			<td>NEXT WINDOW</td>
+			<td>
+				<svg xmlns="http://www.w3.org/2000/svg" id = "spanNext"></svg>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -48,6 +50,11 @@
 
       <script type="text/javascript">
       <!--
+
+// TODO: use shape in next shape window
+// TODO: allow player to play again
+// TODO: to reduce number of objects created, use an array of Shape objects and then copy their coordinates
+
 var spanScore = document.getElementById("spanScore");
 var score = 0;
 
@@ -55,10 +62,10 @@ var score = 0;
 var NUMBER_COLUMNS = 10;
 var NUMBER_ROWS = 15;
 
-var svg = document.body.getElementsByTagName("svg")[0];
+var spanBoard = document.getElementById("spanBoard");
 
-svg.setAttribute("height", NUMBER_ROWS * 20);
-svg.setAttribute("width", NUMBER_COLUMNS * 20);
+spanBoard.setAttribute("height", NUMBER_ROWS * Shape.SQUARE_SIZE);
+spanBoard.setAttribute("width", NUMBER_COLUMNS * Shape.SQUARE_SIZE);
 
 // draw board grid
 var board = new Array(NUMBER_ROWS);
@@ -76,7 +83,7 @@ for(var row = 0; row < board.length; row++) {
       square.setXCoordinate(column * Shape.SQUARE_SIZE);
 
       board[row][column] = square;
-      board[row][column].appendTo(svg);
+      board[row][column].appendTo(spanBoard);
    }
 }
 
@@ -91,9 +98,36 @@ colors[5] = Color.PINK;
 
 var gameOver = false;
 
+var spanNext = document.getElementById("spanNext");
+
+spanNext.setAttribute("height", 6 * Shape.SQUARE_SIZE);
+spanNext.setAttribute("width", 6 * Shape.SQUARE_SIZE);
+
+// draw next window
+var nextWindow = new Array(6);
+
+for(var row = 0; row < 6; row++) {
+   nextWindow[row] = new Array(6);
+
+   for(var column = 0; column < nextWindow[row].length; column++) {
+      square = new Square();
+      square.setSize(Shape.SQUARE_SIZE);
+      square.setColor(Color.NONE);
+
+      square.setYCoordinate(row * Shape.SQUARE_SIZE);
+      square.setXCoordinate(column * Shape.SQUARE_SIZE);
+
+      square.appendTo(spanNext);
+
+      nextWindow[row][column] = square;
+   }
+}
+
 var shape = getRandomShape();
 shape.setColor(colors[Math.floor(Math.random() * 5)]);
-shape.appendTo(svg);
+shape.appendTo(spanBoard);
+
+getNextShape();
 
 function getRandomShape() {
    // random number between 0 and 6
@@ -278,7 +312,7 @@ function timedDrop() {
       // create a new shape
       shape = getRandomShape();
       shape.setColor(colors[Math.floor(Math.random() * 5)]);
-      shape.appendTo(svg);
+      shape.appendTo(spanBoard);
       return;
    }
 
@@ -326,13 +360,82 @@ function timedDrop() {
          }
       }
 
-      shape.detachFrom(svg);
+      shape.detachFrom(spanBoard);
       shape = undefined;
    }
 }
 
-// TODO: next piece window
-// TODO: allow player to play again
+function getNextShape() {
+   // random number between 0 and 6
+   var i = Math.floor(Math.random() * 6);
+
+   var xOffset = 0;
+   var yOffset = 0;
+   var shape;
+
+   if(i == 0) {
+      shape = new IShape();
+
+      // move shape 5-squares to the right
+      xOffset = (2 * Shape.SQUARE_SIZE);
+
+      // move shape 3-squares down
+      yOffset = (4 * Shape.SQUARE_SIZE);
+   }
+   else if(i == 1) {
+      shape = new JShape();
+
+      xOffset = (2 * Shape.SQUARE_SIZE);
+	yOffset = Shape.SQUARE_SIZE;
+   }
+   else if(i == 2) {
+      shape = new LShape();
+
+      xOffset = (3 * Shape.SQUARE_SIZE);
+	yOffset = Shape.SQUARE_SIZE;
+   }
+   else if(i == 3) {
+      shape = new OShape();
+
+      xOffset = (2 * Shape.SQUARE_SIZE);
+      yOffset = (3 * Shape.SQUARE_SIZE);
+   }
+   else if(i == 4) {
+      shape = new SShape(); // can't move
+
+      xOffset = (3 * Shape.SQUARE_SIZE);
+      yOffset = (3 * Shape.SQUARE_SIZE);
+   }
+   else if(i == 5) {
+      shape = new TShape();
+
+      xOffset = (2 * Shape.SQUARE_SIZE);
+      yOffset = (3 * Shape.SQUARE_SIZE);
+   }
+   else if(i == 6) {
+      shape = new ZShape();
+
+      xOffset = (2 * Shape.SQUARE_SIZE);
+      yOffset = (2 * Shape.SQUARE_SIZE);
+   }
+
+   var squares = shape.getSquares();
+   var row, column;
+   var color = colors[Math.floor(Math.random() * 5)];
+
+   // for each square in shape
+   for(var i = 0; i < squares.length; i++) {
+      squares[i].setXCoordinate(squares[i].getXCoordinate() + xOffset);
+      squares[i].setYCoordinate(squares[i].getYCoordinate() + yOffset);
+
+      column = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE);
+      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
+
+      nextWindow[row][column].setColor(color);
+   }
+
+   //return shape;
+}
 
       //-->
       </script>
