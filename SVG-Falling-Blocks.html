@@ -34,6 +34,8 @@
 		</tr>
 		<tr>
 			<td>
+				Score: <span id = "spanScore">0</span><br />
+				<br />
 				~ Instructions ~<br />
 				rotate shape ~ up arrow<br />
 				move left ~ left arrow<br />
@@ -46,6 +48,9 @@
 
       <script type="text/javascript">
       <!--
+var spanScore = document.getElementById("spanScore");
+var score = 0;
+
 // dimensions of board
 var NUMBER_COLUMNS = 10;
 var NUMBER_ROWS = 15;
@@ -247,7 +252,7 @@ function timedDrop() {
             // copy row to temporary board if it is not highlighted
             if(Color.YELLOW != board[fromRow][0].getColor()) {
 
-                        for (var column = 0; column < NUMBER_COLUMNS; column++) {
+               for (var column = 0; column < NUMBER_COLUMNS; column++) {
                   tmpBoard[toRow][column] = board[fromRow][column].getColor();
                }
 
@@ -262,11 +267,12 @@ function timedDrop() {
          // transfer colors from temporary board
          for(var row = 0; row < board.length; row++) {
             for(var column = 0; column < board[row].length; column++) {
-                  board[row][column].setColor(tmpBoard[row][column]);
+               board[row][column].setColor(tmpBoard[row][column]);
             }
          }
 
          isHighlighted = false;
+         spanScore.innerHTML = score
       }
 
       // create a new shape
@@ -296,9 +302,14 @@ function timedDrop() {
          // assume row is completed
          isCompleted = true;
 
-         // test if row is not completed
          for(var c = 0; c < NUMBER_COLUMNS; c++) {
-            if(Color.NONE == board[row][c].getColor()) {
+
+            // test if row is not completed
+            if((Color.NONE == board[row][c].getColor()) ||
+
+               // test if row is highlighted
+               (Color.YELLOW == board[row][c].getColor())){
+
                c = NUMBER_COLUMNS;
                isCompleted = false;
             }
@@ -307,6 +318,7 @@ function timedDrop() {
          // highlight row if it is completed
          if(isCompleted) {
             isHighlighted = true;
+            score = score + 1;
 
             for(var c = 0; c < NUMBER_COLUMNS; c++) {
                board[row][c].setColor(Color.YELLOW);
@@ -320,7 +332,6 @@ function timedDrop() {
 }
 
 // TODO: next piece window
-// TODO: display user's score
 // TODO: allow player to play again
 
       //-->
