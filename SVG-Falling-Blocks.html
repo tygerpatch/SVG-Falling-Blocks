@@ -51,8 +51,9 @@
       <script type="text/javascript">
       <!--
 
-// TODO: allow player to play again
+// BUG: first shape is displayed at wrong position
 // TODO: to reduce number of objects created, use an array of Shape objects and then copy their coordinates
+// TODO: refactor, reduce amount of code, clean up code
 
 var spanScore = document.getElementById("spanScore");
 var score = 0;
@@ -199,7 +200,7 @@ function getRandomShape() {
 
       if(board[row][column].getColor() != Color.NONE) {
          gameOver = true;
-         window.clearInterval(interval);
+         i = squares.length;
       }
    }
 
@@ -263,6 +264,44 @@ function onKeyPress(event) {
 var isHighlighted = false;
 
 function timedDrop() {
+
+   if(gameOver) {
+      if(confirm("Game Over.  Play Again?")) {
+         gameOver = false;
+
+         // clear out previous next shape
+         for(var row = 0; row < 6; row++) {
+            for(var column = 0; column < nextWindow[row].length; column++) {
+               nextWindow[row][column].setColor(Color.NONE);
+            }
+         }
+
+         // clear out tetris board
+         for(var row = 0; row < board.length; row++) {
+            for(var column = 0; column < board[row].length; column++) {
+               board[row][column].setColor(Color.NONE);
+            }
+         }
+
+         // clear out squares from previous shape
+         var squares = shape.getSquares();
+
+         for(var i = 0; i < squares.length; i++) {
+            squares[i].setColor(Color.NONE);
+         }
+
+         shape = getRandomShape();
+         shape.setColor(colors[Math.floor(Math.random() * 5)]);
+         shape.appendTo(spanBoard);
+
+         getNextShape();
+
+         return;
+      }
+
+      window.clearInterval(interval);
+      return;
+   }
 
    if(shape == undefined) {
 
