@@ -67,24 +67,38 @@ var spanBoard = document.getElementById("spanBoard");
 spanBoard.setAttribute("height", NUMBER_ROWS * Shape.SQUARE_SIZE);
 spanBoard.setAttribute("width", NUMBER_COLUMNS * Shape.SQUARE_SIZE);
 
+var spanNext = document.getElementById("spanNext");
+
+spanNext.setAttribute("height", 6 * Shape.SQUARE_SIZE);
+spanNext.setAttribute("width", 6 * Shape.SQUARE_SIZE);
+
 // draw board grid
-var board = new Array(NUMBER_ROWS);
-var square;
+var board = newGrid(NUMBER_ROWS, NUMBER_COLUMNS, spanBoard);
+var nextWindow = newGrid(6, 6, spanNext);
 
-for(var row = 0; row < board.length; row++) {
-   board[row] = new Array(NUMBER_COLUMNS);
+function newGrid(numRows, numColumns, svg) {
+	var grid = new Array(numRows);
+	var square;
 
-   for(var column = 0; column < board[row].length; column++) {
-      square = new Square();
-      square.setSize(Shape.SQUARE_SIZE);
-      square.setColor(Color.NONE);
+	for(var row = 0; row < grid.length; row++) {
+		grid[row] = new Array(numColumns);
 
-      square.setYCoordinate(row * Shape.SQUARE_SIZE);
-      square.setXCoordinate(column * Shape.SQUARE_SIZE);
+		for(var column = 0; column < grid[row].length; column++) {
+			square = new Square();
+			square.setSize(Shape.SQUARE_SIZE);
+			square.setColor(Color.NONE);
 
-      board[row][column] = square;
-      board[row][column].appendTo(spanBoard);
-   }
+			square.setYCoordinate(row * Shape.SQUARE_SIZE);
+			square.setXCoordinate(column * Shape.SQUARE_SIZE);
+
+			square.appendTo(svg);
+
+			grid[row][column] = square;
+
+		}
+	}
+
+	return grid;
 }
 
 var colors = new Array();
@@ -97,31 +111,6 @@ colors[4] = Color.ORANGE;
 colors[5] = Color.PINK;
 
 var gameOver = false;
-
-var spanNext = document.getElementById("spanNext");
-
-spanNext.setAttribute("height", 6 * Shape.SQUARE_SIZE);
-spanNext.setAttribute("width", 6 * Shape.SQUARE_SIZE);
-
-// draw next window
-var nextWindow = new Array(6);
-
-for(var row = 0; row < 6; row++) {
-   nextWindow[row] = new Array(6);
-
-   for(var column = 0; column < nextWindow[row].length; column++) {
-      square = new Square();
-      square.setSize(Shape.SQUARE_SIZE);
-      square.setColor(Color.NONE);
-
-      square.setYCoordinate(row * Shape.SQUARE_SIZE);
-      square.setXCoordinate(column * Shape.SQUARE_SIZE);
-
-      square.appendTo(spanNext);
-
-      nextWindow[row][column] = square;
-   }
-}
 
 var shape = getRandomShape();
 shape.setColor(colors[Math.floor(Math.random() * 5)]);
