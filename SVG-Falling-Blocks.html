@@ -233,31 +233,29 @@ function onKeyPress(event) {
       return;
    }
 
-   if(paused) {
+   if(paused && (keyCode == P_KEY)) {
       // unpause game
-      if(keyCode == P_KEY) {
-         interval = window.setInterval(timedDrop, 500);
-         paused = false;
-      }
+      interval = window.setInterval(timedDrop, 500);
+      paused = false;
+      return;
    }
-   else {
-      if((keyCode == SPACE_BAR) || (keyCode == DOWN_ARROW_KEY)) {
-         moveDown.execute(shape);
-      }
-      else if(keyCode == LEFT_ARROW_KEY) {
-         moveLeft.execute(shape);
-      }
-      else  if(keyCode == RIGHT_ARROW_KEY) {
-         moveRight.execute(shape);
-      }
-      else if(keyCode == UP_ARROW_KEY) {
-         moveClockwise.execute(shape);
-      }
-      else if(keyCode == P_KEY) {
-         // pause game
-         window.clearInterval(interval);
-         paused = true;
-      }
+
+   if((keyCode == SPACE_BAR) || (keyCode == DOWN_ARROW_KEY)) {
+      moveDown.execute(shape);
+   }
+   else if(keyCode == LEFT_ARROW_KEY) {
+      moveLeft.execute(shape);
+   }
+   else  if(keyCode == RIGHT_ARROW_KEY) {
+      moveRight.execute(shape);
+   }
+   else if(keyCode == UP_ARROW_KEY) {
+      moveClockwise.execute(shape);
+   }
+   else if(keyCode == P_KEY) {
+      // pause game
+      window.clearInterval(interval);
+      paused = true;
    }
 }
 
