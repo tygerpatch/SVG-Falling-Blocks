@@ -19,7 +19,7 @@ function Shape() {
 	}
 
 	// Each shape is made up of four squares.
-	this.squares = new Array();
+	this.squares = new Array(4);
 
 	for(var i = 0; i < 4; i++) {
 		this.squares[i] = new Square();

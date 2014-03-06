@@ -52,7 +52,6 @@
       <!--
 
 // BUG: first shape is displayed at wrong position
-// TODO: to reduce number of objects created, use an array of Shape objects and then copy their coordinates
 // TODO: refactor, reduce amount of code, clean up code
 
 var spanScore = document.getElementById("spanScore");
@@ -77,28 +76,28 @@ var board = newGrid(NUMBER_ROWS, NUMBER_COLUMNS, spanBoard);
 var nextWindow = newGrid(6, 6, spanNext);
 
 function newGrid(numRows, numColumns, svg) {
-	var grid = new Array(numRows);
-	var square;
+   var grid = new Array(numRows);
+   var square;
 
-	for(var row = 0; row < grid.length; row++) {
-		grid[row] = new Array(numColumns);
+   for(var row = 0; row < numRows; row++) {
+      grid[row] = new Array(numColumns);
 
-		for(var column = 0; column < grid[row].length; column++) {
-			square = new Square();
-			square.setSize(Shape.SQUARE_SIZE);
-			square.setColor(Color.NONE);
+      for(var column = 0; column < numColumns; column++) {
+         square = new Square();
+         square.setSize(Shape.SQUARE_SIZE);
+         square.setColor(Color.NONE);
 
-			square.setYCoordinate(row * Shape.SQUARE_SIZE);
-			square.setXCoordinate(column * Shape.SQUARE_SIZE);
+         square.setYCoordinate(row * Shape.SQUARE_SIZE);
+         square.setXCoordinate(column * Shape.SQUARE_SIZE);
 
-			square.appendTo(svg);
+         square.appendTo(svg);
 
-			grid[row][column] = square;
+         grid[row][column] = square;
 
-		}
-	}
+      }
+   }
 
-	return grid;
+   return grid;
 }
 
 var colors = new Array();
@@ -112,88 +111,82 @@ colors[5] = Color.PINK;
 
 var gameOver = false;
 
-var shape = getRandomShape();
-shape.setColor(colors[Math.floor(Math.random() * 5)]);
+var shapes = new Array(6);
+
+shapes[0] = new IShape();
+shapes[1] = new JShape();
+shapes[2] = new LShape();
+shapes[3] = new OShape();
+shapes[4] = new SShape();
+shapes[5] = new TShape();
+shapes[6] = new ZShape();
+
+var nextShapeOffsets = new Array(6);
+
+// The following offset map says to:
+// * move the shape 2-squares to the right
+// * move the shape 4-squares down
+nextShapeOffsets[0] = {"x": (2 * Shape.SQUARE_SIZE), "y": (4 * Shape.SQUARE_SIZE)};
+
+nextShapeOffsets[1] = {"x": (2 * Shape.SQUARE_SIZE), "y": Shape.SQUARE_SIZE};
+nextShapeOffsets[2] = {"x": (3 * Shape.SQUARE_SIZE), "y": Shape.SQUARE_SIZE};
+nextShapeOffsets[3] = {"x": (2 * Shape.SQUARE_SIZE), "y": (3 * Shape.SQUARE_SIZE)};
+nextShapeOffsets[4] = {"x": (3 * Shape.SQUARE_SIZE), "y": (3 * Shape.SQUARE_SIZE)};
+nextShapeOffsets[5] = {"x": (2 * Shape.SQUARE_SIZE), "y": (3 * Shape.SQUARE_SIZE)};
+nextShapeOffsets[6] = {"x": (2 * Shape.SQUARE_SIZE), "y": (2 * Shape.SQUARE_SIZE)};
+
+var shapeOffsets = new Array(6);
+
+shapeOffsets[0] = {"x": (5 * Shape.SQUARE_SIZE), "y": (3 * Shape.SQUARE_SIZE)};
+shapeOffsets[1] = {"x": (4 * Shape.SQUARE_SIZE), "y": 0};
+shapeOffsets[2] = {"x": (5 * Shape.SQUARE_SIZE), "y": 0};
+shapeOffsets[3] = {"x": (4 * Shape.SQUARE_SIZE), "y": Shape.SQUARE_SIZE};
+shapeOffsets[4] = {"x": (4 * Shape.SQUARE_SIZE), "y": Shape.SQUARE_SIZE};
+shapeOffsets[5] = {"x": (4 * Shape.SQUARE_SIZE), "y": Shape.SQUARE_SIZE};
+shapeOffsets[6] = {"x": (5 * Shape.SQUARE_SIZE), "y": Shape.SQUARE_SIZE};
+
+var shape = new Shape();
 shape.appendTo(spanBoard);
 
-getNextShape();
+var nextShape = new Shape();
+nextShape.appendTo(spanNext);
+nextShape.setColor(colors[Math.floor(Math.random() * colors.length)]);
 
-function getRandomShape() {
+var shapeIndex = Math.floor(Math.random() * shapes.length);
 
-   if(nextShape == undefined) {
-      // random number between 0 and 6
-      var i = Math.floor(Math.random() * 6);
-   }
-   else {
-      i = nextShape;
-   }
+getShape();
 
-   var xOffset = 0;
-   var yOffset = 0;
-   var shape;
-
-   if(i == 0) {
-      shape = new IShape();
-
-      // move shape 5-squares to the right
-      xOffset = (5 * Shape.SQUARE_SIZE);
-
-      // move shape 3-squares down
-      yOffset = (3 * Shape.SQUARE_SIZE);
-   }
-   else if(i == 1) {
-      shape = new JShape();
-
-      xOffset = (4 * Shape.SQUARE_SIZE);
-   }
-   else if(i == 2) {
-      shape = new LShape();
-
-      xOffset = (5 * Shape.SQUARE_SIZE);
-   }
-   else if(i == 3) {
-      shape = new OShape();
-
-      xOffset = (4 * Shape.SQUARE_SIZE);
-      yOffset = Shape.SQUARE_SIZE;
-   }
-   else if(i == 4) {
-      shape = new SShape(); // can't move
-
-      xOffset = (4 * Shape.SQUARE_SIZE);
-      yOffset = Shape.SQUARE_SIZE;
-   }
-   else if(i == 5) {
-      shape = new TShape();
-
-      xOffset = (4 * Shape.SQUARE_SIZE);
-      yOffset = Shape.SQUARE_SIZE;
-   }
-   else if(i == 6) {
-      shape = new ZShape();
-
-      xOffset = (5 * Shape.SQUARE_SIZE);
-      yOffset = Shape.SQUARE_SIZE;
-   }
-
-   var squares = shape.getSquares();
+function getShape() {
    var row, column;
 
-   // for each square in shape
+   var squares = shape.getSquares();
+   var tmpSquares = shapes[shapeIndex].getSquares();
+
    for(var i = 0; i < squares.length; i++) {
-      squares[i].setXCoordinate(squares[i].getXCoordinate() + xOffset);
-      squares[i].setYCoordinate(squares[i].getYCoordinate() + yOffset);
+      squares[i].setXCoordinate(tmpSquares[i].getXCoordinate() + shapeOffsets[shapeIndex].x);
+      squares[i].setYCoordinate(tmpSquares[i].getYCoordinate() + shapeOffsets[shapeIndex].y);
 
       column = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE);
       row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
 
       if(board[row][column].getColor() != Color.NONE) {
          gameOver = true;
-         i = squares.length;
+         return;
       }
    }
 
-   return shape;
+   shape.setColor(nextShape.getColor());
+
+   shapeIndex = Math.floor(Math.random() * shapes.length);
+   nextShape.setColor(colors[Math.floor(Math.random() * colors.length)]);
+
+   squares = nextShape.getSquares();
+   tmpSquares = shapes[shapeIndex].getSquares();
+
+   for(var i = 0; i < squares.length; i++) {
+      squares[i].setXCoordinate(tmpSquares[i].getXCoordinate() + nextShapeOffsets[shapeIndex].x);
+      squares[i].setYCoordinate(tmpSquares[i].getYCoordinate() + nextShapeOffsets[shapeIndex].y);
+   }
 }
 
 document.onkeypress = onKeyPress;
@@ -277,12 +270,7 @@ function timedDrop() {
             squares[i].setColor(Color.NONE);
          }
 
-         shape = getRandomShape();
-         shape.setColor(colors[Math.floor(Math.random() * 5)]);
-         shape.appendTo(spanBoard);
-
-         getNextShape();
-
+         getShape();
          return;
       }
 
@@ -290,64 +278,52 @@ function timedDrop() {
       return;
    }
 
-   if(shape == undefined) {
+   // if there are highlighted rows on the board
+   if(isHighlighted) {
+      // create a temporary board that's empty
+      var tmpBoard = new Array(NUMBER_ROWS);
 
-      // if there are highlighted rows on the board
-      if(isHighlighted) {
-         // create a temporary board that's empty
-         var tmpBoard = new Array(NUMBER_ROWS);
+      for(var row = 0; row < board.length; row++) {
+         tmpBoard[row] = new Array(NUMBER_COLUMNS);
 
-         for(var row = 0; row < board.length; row++) {
-            tmpBoard[row] = new Array(NUMBER_COLUMNS);
-
-            for(var column = 0; column < board[row].length; column++) {
-                  tmpBoard[row][column] = Color.NONE;
-            }
+         for(var column = 0; column < board[row].length; column++) {
+            tmpBoard[row][column] = Color.NONE;
          }
-
-         // fromRow corresponds to Tetris board
-         var fromRow = NUMBER_ROWS - 1;
-
-         // toRow corresponds to temporary board
-         var toRow = fromRow;
-
-         // while there are still more rows to process on board
-         while(fromRow >= 0) {
-
-            // copy row to temporary board if it is not highlighted
-            if(Color.YELLOW != board[fromRow][0].getColor()) {
-
-               for (var column = 0; column < NUMBER_COLUMNS; column++) {
-                  tmpBoard[toRow][column] = board[fromRow][column].getColor();
-               }
-
-               // move to next row up on temporary board
-               toRow = toRow - 1;
-            }
-
-            // move to next row up on Tetris board
-            fromRow = fromRow - 1;
-         }
-
-         // transfer colors from temporary board
-         for(var row = 0; row < board.length; row++) {
-            for(var column = 0; column < board[row].length; column++) {
-               board[row][column].setColor(tmpBoard[row][column]);
-            }
-         }
-
-         isHighlighted = false;
-         spanScore.innerHTML = score
       }
 
-      // create a new shape
-      shape = getRandomShape();
-      shape.setColor(nextColor);
-      shape.appendTo(spanBoard);
+      // fromRow corresponds to Tetris board
+      var fromRow = NUMBER_ROWS - 1;
 
-      getNextShape();
+      // toRow corresponds to temporary board
+      var toRow = fromRow;
 
-      return;
+      // while there are still more rows to process on board
+      while(fromRow >= 0) {
+
+         // copy row to temporary board if it is not highlighted
+         if(Color.YELLOW != board[fromRow][0].getColor()) {
+
+            for (var column = 0; column < NUMBER_COLUMNS; column++) {
+               tmpBoard[toRow][column] = board[fromRow][column].getColor();
+            }
+
+            // move to next row up on temporary board
+            toRow = toRow - 1;
+         }
+
+         // move to next row up on Tetris board
+         fromRow = fromRow - 1;
+      }
+
+      // transfer colors from temporary board
+      for(var row = 0; row < board.length; row++) {
+         for(var column = 0; column < board[row].length; column++) {
+            board[row][column].setColor(tmpBoard[row][column]);
+         }
+      }
+
+      isHighlighted = false;
+      spanScore.innerHTML = score
    }
 
    if(moveDown.isValidMove(shape)) {
@@ -394,90 +370,8 @@ function timedDrop() {
          }
       }
 
-      shape.detachFrom(spanBoard);
-      shape = undefined;
+      getShape();
    }
-}
-
-var nextShape, nextColor;
-
-function getNextShape() {
-   // random number between 0 and 6
-   var i = Math.floor(Math.random() * 6);
-
-   var xOffset = 0;
-   var yOffset = 0;
-   var shape;
-
-   if(i == 0) {
-      shape = new IShape();
-
-      // move shape 5-squares to the right
-      xOffset = (2 * Shape.SQUARE_SIZE);
-
-      // move shape 3-squares down
-      yOffset = (4 * Shape.SQUARE_SIZE);
-   }
-   else if(i == 1) {
-      shape = new JShape();
-
-      xOffset = (2 * Shape.SQUARE_SIZE);
-      yOffset = Shape.SQUARE_SIZE;
-   }
-   else if(i == 2) {
-      shape = new LShape();
-
-      xOffset = (3 * Shape.SQUARE_SIZE);
-      yOffset = Shape.SQUARE_SIZE;
-   }
-   else if(i == 3) {
-      shape = new OShape();
-
-      xOffset = (2 * Shape.SQUARE_SIZE);
-      yOffset = (3 * Shape.SQUARE_SIZE);
-   }
-   else if(i == 4) {
-      shape = new SShape(); // can't move
-
-      xOffset = (3 * Shape.SQUARE_SIZE);
-      yOffset = (3 * Shape.SQUARE_SIZE);
-   }
-   else if(i == 5) {
-      shape = new TShape();
-
-      xOffset = (2 * Shape.SQUARE_SIZE);
-      yOffset = (3 * Shape.SQUARE_SIZE);
-   }
-   else if(i == 6) {
-      shape = new ZShape();
-
-      xOffset = (2 * Shape.SQUARE_SIZE);
-      yOffset = (2 * Shape.SQUARE_SIZE);
-   }
-
-   var squares = shape.getSquares();
-   var row, column;
-   nextColor = colors[Math.floor(Math.random() * 5)];
-   nextShape = i;
-
-   // clear out previous next shape
-   for(var row = 0; row < 6; row++) {
-      for(var column = 0; column < nextWindow[row].length; column++) {
-         nextWindow[row][column].setColor(Color.NONE);
-      }
-   }
-
-   // for each square in shape
-   for(var i = 0; i < squares.length; i++) {
-      squares[i].setXCoordinate(squares[i].getXCoordinate() + xOffset);
-      squares[i].setYCoordinate(squares[i].getYCoordinate() + yOffset);
-
-      column = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE);
-      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
-
-      nextWindow[row][column].setColor(nextColor);
-   }
-
 }
 
       //-->
