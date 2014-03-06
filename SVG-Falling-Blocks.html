@@ -51,9 +51,6 @@
       <script type="text/javascript">
       <!--
 
-// BUG: first shape is displayed at wrong position
-// TODO: refactor, reduce amount of code, clean up code
-
 var spanScore = document.getElementById("spanScore");
 var score = 0;
 
@@ -247,27 +244,12 @@ function timedDrop() {
 
    if(gameOver) {
       if(confirm("Game Over.  Play Again?")) {
-         gameOver = false;
+	gameOver = false;
 
-         // clear out previous next shape
-         for(var row = 0; row < 6; row++) {
-            for(var column = 0; column < nextWindow[row].length; column++) {
-               nextWindow[row][column].setColor(Color.NONE);
-            }
-         }
-
-         // clear out tetris board
          for(var row = 0; row < board.length; row++) {
             for(var column = 0; column < board[row].length; column++) {
                board[row][column].setColor(Color.NONE);
             }
-         }
-
-         // clear out squares from previous shape
-         var squares = shape.getSquares();
-
-         for(var i = 0; i < squares.length; i++) {
-            squares[i].setColor(Color.NONE);
          }
 
          getShape();
@@ -278,100 +260,107 @@ function timedDrop() {
       return;
    }
 
-   // if there are highlighted rows on the board
    if(isHighlighted) {
-      // create a temporary board that's empty
-      var tmpBoard = new Array(NUMBER_ROWS);
-
-      for(var row = 0; row < board.length; row++) {
-         tmpBoard[row] = new Array(NUMBER_COLUMNS);
-
-         for(var column = 0; column < board[row].length; column++) {
-            tmpBoard[row][column] = Color.NONE;
-         }
-      }
-
-      // fromRow corresponds to Tetris board
-      var fromRow = NUMBER_ROWS - 1;
-
-      // toRow corresponds to temporary board
-      var toRow = fromRow;
-
-      // while there are still more rows to process on board
-      while(fromRow >= 0) {
-
-         // copy row to temporary board if it is not highlighted
-         if(Color.YELLOW != board[fromRow][0].getColor()) {
-
-            for (var column = 0; column < NUMBER_COLUMNS; column++) {
-               tmpBoard[toRow][column] = board[fromRow][column].getColor();
-            }
-
-            // move to next row up on temporary board
-            toRow = toRow - 1;
-         }
-
-         // move to next row up on Tetris board
-         fromRow = fromRow - 1;
-      }
-
-      // transfer colors from temporary board
-      for(var row = 0; row < board.length; row++) {
-         for(var column = 0; column < board[row].length; column++) {
-            board[row][column].setColor(tmpBoard[row][column]);
-         }
-      }
-
-      isHighlighted = false;
-      spanScore.innerHTML = score
+      dropHighlightedRows();
    }
 
-   if(moveDown.isValidMove(shape)) {
-      moveDown.move(shape);
-   }
-   else {
-      // put shape on grid
-      var squares = shape.getSquares();
-
-      var row, column;
-      var isCompleted;
-
-      // for each square in shape
-      for(var i = 0; i < squares.length; i++) {
-         column = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE);
-         row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
-
-         board[row][column].setColor(shape.getColor());
-
-         // assume row is completed
-         isCompleted = true;
-
-         for(var c = 0; c < NUMBER_COLUMNS; c++) {
-
-            // test if row is not completed
-            if((Color.NONE == board[row][c].getColor()) ||
-
-               // test if row is highlighted
-               (Color.YELLOW == board[row][c].getColor())){
-
-               c = NUMBER_COLUMNS;
-               isCompleted = false;
-            }
-         }
-
-         // highlight row if it is completed
-         if(isCompleted) {
-            isHighlighted = true;
-            score = score + 1;
-
-            for(var c = 0; c < NUMBER_COLUMNS; c++) {
-               board[row][c].setColor(Color.YELLOW);
-            }
-         }
-      }
-
+   if(!moveDown.execute(shape)) {
+      putShapeOnBoard();
+      highlightCompletedRows();
       getShape();
    }
+}
+
+function putShapeOnBoard() {
+   var row, column;
+   var squares = shape.getSquares();
+
+   for(var i = 0; i < squares.length; i++) {
+      column = (squares[i].getXCoordinate()/Shape.SQUARE_SIZE);
+      row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
+
+      board[row][column].setColor(shape.getColor());
+   }
+}
+
+function highlightCompletedRows() {
+	var row, column;
+	var squares = shape.getSquares();
+
+	var isCompletelyFilled;
+
+	for(var i = 0; i < squares.length; i++) {
+	
+		// assume row is completely filled
+		isCompletelyFilled = true;
+
+		row = (squares[i].getYCoordinate()/Shape.SQUARE_SIZE);
+
+		for(column = 0; column < NUMBER_COLUMNS; column++) {
+
+			if((board[row][column].getColor() == Color.YELLOW) || (board[row][column].getColor() == Color.NONE)) {
+				column = NUMBER_COLUMNS;
+				isCompletelyFilled = false;
+			}
+		}
+
+		if(isCompletelyFilled) {
+			isHighlighted = true;
+			score = score + 1;
+
+			for(column = 0; column < NUMBER_COLUMNS; column++) {
+				board[row][column].setColor(Color.YELLOW);
+			}
+		}
+	}
+
+}
+
+function dropHighlightedRows() {
+
+   var tmpBoard = new Array(NUMBER_ROWS);
+
+   for(var row = 0; row < NUMBER_ROWS; row++) {
+      tmpBoard[row] = new Array(NUMBER_COLUMNS);
+
+      for(var column = 0; column < NUMBER_COLUMNS; column++) {
+         tmpBoard[row][column] = Color.NONE;
+      }
+   }
+
+   // fromRow corresponds to Tetris board
+   var fromRow = NUMBER_ROWS - 1;
+
+   // toRow corresponds to temporary board
+   var toRow = fromRow;
+
+   // while there are still more rows to process on board
+   while(fromRow >= 0) {
+
+      // copy row to temporary board if it is not highlighted
+      if(Color.YELLOW != board[fromRow][0].getColor()) {
+
+         for (var column = 0; column < NUMBER_COLUMNS; column++) {
+            tmpBoard[toRow][column] = board[fromRow][column].getColor();
+         }
+
+         // move to next row up on temporary board
+         toRow = toRow - 1;
+      }
+
+      // move to next row up on Tetris board
+      fromRow = fromRow - 1;
+   }
+
+   // transfer colors from temporary board
+   for(var row = 0; row < board.length; row++) {
+      for(var column = 0; column < board[row].length; column++) {
+         board[row][column].setColor(tmpBoard[row][column]);
+      }
+   }
+
+   isHighlighted = false;
+   spanScore.innerHTML = score;
 }
 
       //-->

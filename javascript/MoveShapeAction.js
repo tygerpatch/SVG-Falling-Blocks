@@ -10,7 +10,10 @@ function MoveShapeAction(board) {
    this.execute = function(shape) {
       if(this.isValidMove(shape)) {
          this.move(shape);
+         return true;
       }
+
+      return false;
    }
 
    this.isValidMove = function(shape) {
